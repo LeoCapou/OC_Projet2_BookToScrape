@@ -51,7 +51,7 @@ def page_produit(url):
         # Description
         description = soup.find_all('p')
         description = description[3].text
-        ctx['description'] = description.replace("\u203d","").replace("\u2028","").replace("\ufb01","").replace("\ufb02","").replace("\ufeff","")
+        ctx['description'] = description.replace("\u203d","").replace("\u2028","").replace("\ufb01","").replace("\ufb02","").replace("\ufeff","").replace("\u2015","")
 
         # Image url
         image = soup.find_all('img')

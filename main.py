@@ -63,10 +63,10 @@ def main():
                                     'category': category_title,
                                     'review_rating': str(page_produit(livre)['notation']),
                                     'image_url': str(page_produit(livre)['image_url']),
-                                    'product_description': str(page_produit(livre)['description']),})
+                                    'product_description': str(page_produit(livre)['description']).encode("ascii", "ignore"),})
 
                     #telechargement image livre    
-                    nom_image = str(page_produit(livre)['titre']).replace(":"," ").replace("/"," ").replace('\\'," ").replace('"'," ") + ".jpg"            
+                    nom_image = str(page_produit(livre)['titre']).replace(":"," ").replace("/"," ").replace('\\'," ").replace('"'," ").replace('<'," ").replace('>'," ").replace('?'," ").replace('*'," ").replace(':'," ") + ".jpg"            
                     urllib.request.urlretrieve(str(page_produit(livre)['image_url']),"./Images/"+nom_image )                 
 
     else :
