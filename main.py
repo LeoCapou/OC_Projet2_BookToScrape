@@ -63,19 +63,20 @@ def main():
 
             # parcours livres de la categorie
             for livre in categorie_extraction(category_link):
+                infos_livre = page_produit(livre)
                 writer.writerow(
                     {
-                        "product_page_url": str(page_produit(livre)["url_produit"]),
-                        "upc": str(page_produit(livre)["upc"]),
-                        "title": str(page_produit(livre)["titre"]),
-                        "price_including_tax": str(page_produit(livre)["prixTTC"]),
-                        "price_excluding_tax": str(page_produit(livre)["prixHT"]),
-                        "number_available": str(page_produit(livre)["disponibilite"]),
+                        "product_page_url": str(infos_livre["url_produit"]),
+                        "upc": str(infos_livre["upc"]),
+                        "title": str(infos_livre["titre"]),
+                        "price_including_tax": str(infos_livre["prixTTC"]),
+                        "price_excluding_tax": str(infos_livre["prixHT"]),
+                        "number_available": str(infos_livre["disponibilite"]),
                         "category": category_title,
-                        "review_rating": str(page_produit(livre)["notation"]),
-                        "image_url": str(page_produit(livre)["image_url"]),
+                        "review_rating": str(infos_livre["notation"]),
+                        "image_url": str(infos_livre["image_url"]),
                         "product_description": str(
-                            page_produit(livre)["description"]
+                            infos_livre["description"]
                         ).encode("ascii", "ignore"),
                     }
                 )
