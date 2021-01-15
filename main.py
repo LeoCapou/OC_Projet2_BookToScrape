@@ -1,4 +1,3 @@
-
 import requests, time, sys
 from bs4 import BeautifulSoup
 import csv
@@ -10,7 +9,7 @@ from fonctions import *
 
 def main():
 
-    response = requests.get('https://books.toscrape.com/index.html')
+    response = requests.get("https://books.toscrape.com/index.html")
 
     if not response.ok:
         # Quitte le programme si erreur impossible
@@ -18,56 +17,75 @@ def main():
 
     # Creation repertoire contenant les CSV
     try:
-        os.mkdir('CSV')
-        print("Repertoire CSV cree") 
+        os.mkdir("CSV")
+        print("Repertoire CSV cree")
     except FileExistsError:
         print("Repertoire CSV existe deja")
 
     # Creation repertoire contenant les Images
     try:
-        os.mkdir('Images')
-        print("Repertoire IMAGES cree") 
+        os.mkdir("Images")
+        print("Repertoire IMAGES cree")
     except FileExistsError:
-        print("Repertoire IMAGES existe deja")      
+        print("Repertoire IMAGES existe deja")
 
     # parcours toutes les categories
-    soup = BeautifulSoup(response.content, 'lxml')
-    nav_list = soup.find('ul',{'class':"nav nav-list"})
-    category_list = nav_list.find('ul')
+    soup = BeautifulSoup(response.content, "lxml")
+    nav_list = soup.find("ul", {"class": "nav nav-list"})
+    category_list = nav_list.find("ul")
 
-    l = len(category_list.find_all('a')) #progression
-    
-    for category in category_list.find_all('a'):
+    l = len(category_list.find_all("a"))  # progression
+
+    for category in category_list.find_all("a"):
         category_title = category.text
         category_title = category_title.strip()
-        category_link = "https://books.toscrape.com/" + category['href']
+        category_link = "https://books.toscrape.com/" + category["href"]
 
         print(category_title)
 
-        #export csv
-        titre_csv = category_title.replace(" ","_") + ".csv"
-        with open("./CSV/"+titre_csv, 'w') as f:           
-            fnames = ['product_page_url','upc','title','price_including_tax','price_excluding_tax','number_available','product_description','category','review_rating','image_url']
-            writer = csv.DictWriter(f, fieldnames=fnames)    
-            writer.writeheader()  
-                                    
+        # export csv
+        titre_csv = category_title.replace(" ", "_") + ".csv"
+        with open("./CSV/" + titre_csv, "w") as f:
+            fnames = [
+                "product_page_url",
+                "upc",
+                "title",
+                "price_including_tax",
+                "price_excluding_tax",
+                "number_available",
+                "product_description",
+                "category",
+                "review_rating",
+                "image_url",
+            ]
+            writer = csv.DictWriter(f, fieldnames=fnames)
+            writer.writeheader()
+
             # parcours livres de la categorie
             for livre in categorie_extraction(category_link):
-                writer.writerow({'product_page_url' : str(page_produit(livre)['url_produit']),
-                                'upc': str(page_produit(livre)['upc']),
-                                'title': str(page_produit(livre)['titre']),
-                                'price_including_tax': str(page_produit(livre)['prixTTC']),
-                                'price_excluding_tax': str(page_produit(livre)['prixHT']),
-                                'number_available': str(page_produit(livre)['disponibilite']),                                  
-                                'category': category_title,
-                                'review_rating': str(page_produit(livre)['notation']),
-                                'image_url': str(page_produit(livre)['image_url']),
-                                'product_description': str(page_produit(livre)['description']).encode("ascii", "ignore"),})
+                writer.writerow(
+                    {
+                        "product_page_url": str(page_produit(livre)["url_produit"]),
+                        "upc": str(page_produit(livre)["upc"]),
+                        "title": str(page_produit(livre)["titre"]),
+                        "price_including_tax": str(page_produit(livre)["prixTTC"]),
+                        "price_excluding_tax": str(page_produit(livre)["prixHT"]),
+                        "number_available": str(page_produit(livre)["disponibilite"]),
+                        "category": category_title,
+                        "review_rating": str(page_produit(livre)["notation"]),
+                        "image_url": str(page_produit(livre)["image_url"]),
+                        "product_description": str(
+                            page_produit(livre)["description"]
+                        ).encode("ascii", "ignore"),
+                    }
+                )
 
-                #telechargement image livre    
-                nom_image = str(page_produit(livre)['titre']) + ".jpg" 
-                nom_image = re.sub(r'[\\\\/*?:"<>|]',"",nom_image)           
-                urllib.request.urlretrieve(str(page_produit(livre)['image_url']),"./Images/"+nom_image )                 
+                # telechargement image livre
+                nom_image = str(page_produit(livre)["titre"]) + ".jpg"
+                nom_image = re.sub(r'[\\\\/*?:"<>|]', "", nom_image)
+                urllib.request.urlretrieve(
+                    str(page_produit(livre)["image_url"]), "./Images/" + nom_image
+                )
 
 
 if __name__ == "__main__":
